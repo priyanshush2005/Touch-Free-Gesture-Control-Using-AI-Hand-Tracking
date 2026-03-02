@@ -7,7 +7,7 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
-# Setup HandLandmarker
+
 base_options = python.BaseOptions(model_asset_path="D:\\GestureWaveAI\\hand_landmarker.task")
 options = vision.HandLandmarkerOptions(
     base_options=base_options,
@@ -28,7 +28,6 @@ CONNECTIONS = [
     (5,9),(9,13),(13,17)            # Palm connections
 ]
 
-# Open camera
 cap = cv2.VideoCapture(0)
 
 while True:
