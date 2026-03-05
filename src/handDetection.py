@@ -12,7 +12,7 @@ base_options = python.BaseOptions(model_asset_path="D:\\GestureWaveAI\\hand_land
 options = vision.HandLandmarkerOptions(
     base_options=base_options,
     num_hands=2,
-    min_hand_detection_confidence=0.5,
+    min_hand_detection_confidence=0.5,#hand detection
     min_hand_presence_confidence=0.5,
     min_tracking_confidence=0.5
 )
@@ -67,4 +67,5 @@ while True:
         break
 
 cap.release()
+
 cv2.destroyAllWindows()
