@@ -1,9 +1,20 @@
+<div align="center">
+
 # GestureWave AI
 ### Touch-Free Gesture Control Using AI Hand Tracking
 
+![Python](https://img.shields.io/badge/Python-3.9+-blue?style=flat-square&logo=python)
+![OpenCV](https://img.shields.io/badge/OpenCV-4.x-green?style=flat-square&logo=opencv)
+![MediaPipe](https://img.shields.io/badge/MediaPipe-Latest-orange?style=flat-square)
+![Status](https://img.shields.io/badge/Status-In%20Development-yellow?style=flat-square)
+
 > Control your computer with just your hands — no touch required.
 
-📌 Overview
+</div>
+
+---
+
+## 📌 Overview
 
 GestureWave AI is a touch-free gesture control desktop application that uses 
 AI-powered hand tracking to let users control their computer without any 
@@ -13,7 +24,9 @@ adjusting volume, and taking screenshots.
 
 Built with Python, OpenCV, and MediaPipe — no special hardware required.
 
-✨ Features
+---
+
+## ✨ Features
 
 | Feature | Description | Status |
 |---|---|---|
@@ -24,8 +37,10 @@ Built with Python, OpenCV, and MediaPipe — no special hardware required.
 | Mode Switching | Switch between Presentation and Media mode with a gesture | 🔨 In Progress |
 | Two-Hand Screenshot | Both palms open simultaneously takes a screenshot | 🔨 In Progress |
 
-## 🗂 Project Structure
+---
 
+## 🗂 Project Structure
+```
 GestureWave-AI/
 │
 ├── src/
@@ -43,6 +58,9 @@ GestureWave-AI/
 ├── requirements.txt            # Python dependencies
 └── README.md
 ```
+
+---
+
 ## 🛠 Tech Stack
 
 - **Python 3.9+** — Core language
@@ -54,19 +72,20 @@ GestureWave-AI/
 
 ---
 
-### ⚙️ Installation & Setup
+## ⚙️ Installation & Setup
 
-  1. Clone the repository
+### 1. Clone the repository
 ```bash
 git clone https://github.com/priyanshush2005/Touch-Free-Gesture-Control-Using-AI-Hand-Tracking.git
 cd Touch-Free-Gesture-Control-Using-AI-Hand-Tracking
 ```
- 2. Install dependencies
+
+### 2. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
- 3. Run the application
+### 3. Run the application
 ```bash
 cd src
 python main.py
@@ -74,7 +93,10 @@ python main.py
 
 > **Requirements:** Python 3.9+, Windows OS, a working webcam
 
+---
+
 ## 🖐 Gesture Map
+
 | Gesture | Media Mode | Presentation Mode |
 |---|---|---|
 | Swipe Right | Volume Up | Next Slide |
@@ -83,8 +105,10 @@ python main.py
 | Thumbs Up | Switch to Presentation | Switch to Media |
 | Both Palms Open | Screenshot | Screenshot |
 
-## 🏗 How It Works
+---
 
+## 🏗 How It Works
+```
 Webcam Frame
      ↓
 Hand Landmark Detection (MediaPipe — 21 points)
@@ -97,6 +121,9 @@ Action Execution (PyAutoGUI system command)
      ↓
 HUD Overlay (gesture name + confidence on screen)
 ```
+
+---
+
 ## 📈 Development Progress
 
 - [x] Project structure setup
