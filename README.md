@@ -151,7 +151,7 @@ HUD Overlay (gesture name + confidence on screen)
 
 ## 📄 License
 
-This project is for educational purposes — NIET, Greater Noida.
+This project is for educational purposes — GLA University, Mathura.
 
 ---
 
