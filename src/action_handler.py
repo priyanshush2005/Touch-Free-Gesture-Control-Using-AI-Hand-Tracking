@@ -6,7 +6,6 @@ import time
 import pyautogui
 import subprocess
 from PIL import ImageGrab
-import os
 
 from mode_manager import get_mode, switch_mode, is_presentation_mode, is_media_mode
 
