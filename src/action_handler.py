@@ -135,3 +135,99 @@ def get_palm_hold_progress():
         return 0.0
     elapsed = time.time() - _palm_hold_start
     return min(1.0, elapsed / PALM_HOLD_DURATION)
+
+#Main Execution Function 
+
+def execute(gesture, confidence, hand_count):
+    """
+    Main function — called every frame by main.py.
+    Takes gesture name, confidence score, and hand count.
+    Decides what action to fire based on current mode.
+    """
+    global _last_action_time, _palm_hold_start
+    global _palm_holding, _last_gesture
+
+    now  = time.time()
+    mode = get_mode()
+
+    #GLOBAL GESTURES — work in any mode
+
+    # Screenshot — two hands both open
+    if gesture == "BOTH_PALMS" and hand_count == 2:
+        _take_screenshot()
+        return
+
+    #Mode switch — thumbs up
+    if gesture == "THUMBS_UP":
+        switched = switch_mode()
+        if switched:
+            print(f"[Action] Mode switched to: {get_mode().upper()}")
+        return
+
+    #PRESENTATION MODE 
+
+    if mode == "presentation":
+
+        # Open palm held for 4 seconds = toggle fullscreen
+        if gesture == "OPEN_PALM":
+            if not _palm_holding:
+                # Palm just appeared — start the timer
+                _palm_hold_start = now
+                _palm_holding    = True
+            else:
+                # Palm still showing — check if 4 seconds passed
+                elapsed = now - _palm_hold_start
+                if elapsed >= PALM_HOLD_DURATION:
+                    _toggle_fullscreen()
+                    _palm_holding    = False   # reset so it needs 4s again
+                    _palm_hold_start = 0
+        else:
+            # Palm disappeared — reset timer
+            _palm_holding    = False
+            _palm_hold_start = 0
+
+        # Swipe gestures — with cooldown
+        if gesture in ("SWIPE_RIGHT", "SWIPE_LEFT"):
+            if now - _last_action_time >= ACTION_COOLDOWN:
+                if gesture == "SWIPE_RIGHT":
+                    _next_slide()
+                else:
+                    _prev_slide()
+                _last_action_time = now
+
+    #MEDIA MODE 
+
+    elif mode == "media":
+
+        # Reset palm timer if we switch to media mode
+        _palm_holding    = False
+        _palm_hold_start = 0
+
+        # Open palm = play/pause (with cooldown, not hold)
+        if gesture == "OPEN_PALM":
+            if now - _last_action_time >= ACTION_COOLDOWN:
+                _play_pause()
+                _last_action_time = now
+
+        # Index finger up = volume up (continuous, no cooldown needed)
+        elif gesture == "INDEX_UP":
+            _volume_up()
+
+        # Pinky up = volume down (continuous, no cooldown needed)
+        elif gesture == "PINKY_UP":
+            _volume_down()
+
+        # Swipe right = small volume up tap
+        elif gesture == "SWIPE_RIGHT":
+            if now - _last_action_time >= ACTION_COOLDOWN:
+                pyautogui.press('volumeup')
+                _last_action_time = now
+
+        # Swipe left = small volume down tap
+        elif gesture == "SWIPE_LEFT":
+            if now - _last_action_time >= ACTION_COOLDOWN:
+                pyautogui.press('volumedown')
+                _last_action_time = now
+
+    # Track last gesture for next frame
+    _last_gesture = gesture    
