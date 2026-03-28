@@ -42,3 +42,27 @@ def switch_mode():
     _last_switch_time = now
     print(f"[ModeManager] Switched to: {_current_mode.upper()}")
     return True
+
+def is_presentation_mode():
+    """
+    Returns True if currently in presentation mode.
+    Convenience function so other files don't have to compare strings.
+    """
+    return _current_mode == PRESENTATION_MODE
+
+
+def is_media_mode():
+    """
+    Returns True if currently in media mode.
+    """
+    return _current_mode == MEDIA_MODE
+
+
+def reset():
+    """
+    Resets back to default media mode.
+    Called when app starts or restarts.
+    """
+    global _current_mode, _last_switch_time
+    _current_mode     = MEDIA_MODE
+    _last_switch_time = 0
