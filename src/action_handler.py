@@ -96,3 +96,42 @@ def _toggle_fullscreen():
         pyautogui.press('escape')
         _fullscreen_active = False
         print("[Action] Fullscreen OFF")
+
+#Media Actions 
+
+def _play_pause():
+    pyautogui.press('space')
+    print("[Action] Play / Pause")
+
+#Screenshot 
+def _take_screenshot():
+    global _screenshot_cooldown
+
+    now = time.time()
+    if now - _screenshot_cooldown < SCREENSHOT_COOLDOWN:
+        return   # still in cooldown, skip
+
+    # Save to user's Pictures folder
+    pictures_dir = os.path.join(os.path.expanduser("~"), "Pictures", "GestureWave")
+    os.makedirs(pictures_dir, exist_ok=True)
+
+    filename = f"screenshot_{int(now)}.png"
+    filepath = os.path.join(pictures_dir, filename)
+
+    screenshot = ImageGrab.grab()
+    screenshot.save(filepath)
+
+    _screenshot_cooldown = now
+    print(f"[Action] Screenshot saved → {filepath}")
+
+#Palm Hold Timer - for fullscreen(Presentaion Mode only)
+def get_palm_hold_progress():
+    """
+    Returns float 0.0 to 1.0 showing how long palm has been held.
+    0.0 = just started, 1.0 = 4 seconds reached.
+    Used by overlay.py to draw the progress bar.
+    """
+    if not _palm_holding:
+        return 0.0
+    elapsed = time.time() - _palm_hold_start
+    return min(1.0, elapsed / PALM_HOLD_DURATION)
