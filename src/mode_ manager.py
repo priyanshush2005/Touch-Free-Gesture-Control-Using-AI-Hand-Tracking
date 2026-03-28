@@ -1,11 +1,10 @@
 import time
 
-
-# ── Mode constants ───────────────────────────────────────────────────────────
+#Mode constants
 PRESENTATION_MODE = "presentation"
 MEDIA_MODE        = "media"
 
-# ── Internal state ───────────────────────────────────────────────────────────
+#Internal state
 _current_mode         = MEDIA_MODE   # app starts in media mode
 _last_switch_time     = 0            # timestamp of last mode switch
 MODE_SWITCH_COOLDOWN  = 2.0          # seconds before mode can switch again

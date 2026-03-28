@@ -1,11 +1,11 @@
 import math
 
 
-# ── Finger tip and base landmark indices ────────────────────────────────────
+#Finger tip and base landmark indices
 FINGER_TIPS  = [4, 8, 12, 16, 20]   # Thumb, Index, Middle, Ring, Pinky
 FINGER_BASES = [2, 6, 10, 14, 18]   # Base knuckle of each finger
 
-# ── Swipe detection state (tracked across frames) ───────────────────────────
+#Swipe detection state (tracked across frames) 
 _swipe_history = []          # stores recent x positions of index finger tip
 SWIPE_HISTORY_LENGTH = 12    # how many frames to track
 SWIPE_THRESHOLD = 0.12       # minimum normalized x movement to count as swipe
@@ -55,12 +55,12 @@ def classify(landmarks):
 
     hand_count = len(landmarks)
 
-    # ── No hands detected ───────────────────────────────────────────────────
+    #No hands detected
     if hand_count == 0:
         _swipe_history.clear()
         return ("NONE", 0.0, 0)
 
-    # ── TWO HANDS — check for screenshot gesture first ──────────────────────
+    #TWO HANDS — check for screenshot gesture first 
     if hand_count == 2:
         fingers_h1 = _get_finger_states(landmarks[0])
         fingers_h2 = _get_finger_states(landmarks[1])
@@ -87,30 +87,30 @@ def classify(landmarks):
        and not fingers[3] and not fingers[4]:
         return ("INDEX_UP", 0.92, hand_count)
 
-    # ── PINKY ONLY — only pinky up ──────────────────────────────────────────
+    #PINKY ONLY — only pinky up 
     if not fingers[0] and not fingers[1] and not fingers[2] \
        and not fingers[3] and fingers[4]:
         return ("PINKY_UP", 0.92, hand_count)
 
-    # ── SWIPE DETECTION — tracks index fingertip across frames ──────────────
-    index_tip_x = hand[8].x   # normalized x position of index fingertip
+    #SWIPE DETECTION tracks index fingertip across frames
+    index_tip_x = hand[8].x   #normalized x position of index fingertip
 
     _swipe_history.append(index_tip_x)
     if len(_swipe_history) > SWIPE_HISTORY_LENGTH:
         _swipe_history.pop(0)
 
     if len(_swipe_history) == SWIPE_HISTORY_LENGTH:
-        movement = _swipe_history[-1] - _swipe_history[0]  # total x movement
+        movement = _swipe_history[-1] - _swipe_history[0]  #total x movement
 
         if movement > SWIPE_THRESHOLD:
-            # Moving right in camera = actual swipe right
+            #Moving right in camera = actual swipe right
             _swipe_history.clear()
             return ("SWIPE_RIGHT", 0.90, hand_count)
 
         elif movement < -SWIPE_THRESHOLD:
-            # Moving left in camera = actual swipe left
+            #Moving left in camera = actual swipe left
             _swipe_history.clear()
             return ("SWIPE_LEFT", 0.90, hand_count)
 
-    # ── UNKNOWN — hand detected but no gesture matched ──────────────────────
+    #UNKNOWN hand detected but no gesture matched
     return ("UNKNOWN", 0.0, hand_count)
