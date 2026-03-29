@@ -144,6 +144,35 @@ class GestureWaveApp(ctk.CTk):
 
         self._sidebar_divider()
 
+        #Gesture Map
+        ctk.CTkLabel(
+            self.sidebar, text="GESTURE MAP",
+            font=ctk.CTkFont(size=10, weight="bold"),
+            text_color="#4a5568"
+        ).pack(padx=16, anchor="w", pady=(10, 6))
 
+        gestures = [
+            ("Open Palm",    "Play/Pause · Fullscreen"),
+            ("Swipe Right",  "Next · Vol up"),
+            ("Swipe Left",   "Prev · Vol down"),
+            ("Index Up",     "Volume up (hold)"),
+            ("Pinky Up",     "Volume down (hold)"),
+            ("Thumbs Up",    "Switch mode"),
+            ("Both Palms",   "Screenshot"),
+        ]
 
+        for gesture, action in gestures:
+            row = ctk.CTkFrame(self.sidebar, fg_color="transparent")
+            row.pack(padx=12, fill="x", pady=1)
+            ctk.CTkLabel(
+                row, text=gesture,
+                font=ctk.CTkFont(size=11),
+                text_color="#9ca3af", width=90, anchor="w"
+            ).pack(side="left")
+            ctk.CTkLabel(
+                row, text=action,
+                font=ctk.CTkFont(size=10),
+                text_color="#4a5568", anchor="w"
+            ).pack(side="left", padx=(4, 0))
 
+        self._sidebar_divider()
