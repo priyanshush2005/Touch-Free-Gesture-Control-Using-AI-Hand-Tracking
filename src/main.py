@@ -176,3 +176,33 @@ class GestureWaveApp(ctk.CTk):
             ).pack(side="left", padx=(4, 0))
 
         self._sidebar_divider()
+
+        #Stop button
+        self.stop_btn = ctk.CTkButton(
+            self.sidebar,
+            text="Stop Camera",
+            fg_color="#3b0f0f",
+            hover_color="#5c1a1a",
+            text_color="#fca5a5",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            command=self.stop_camera,
+            height=38,
+            corner_radius=8
+        )
+        self.stop_btn.pack(padx=12, pady=(8, 6), fill="x", side="bottom")
+
+        self.start_btn = ctk.CTkButton(
+            self.sidebar,
+            text="Start Camera",
+            fg_color="#0f3b1f",
+            hover_color="#1a5c2e",
+            text_color="#6ee7b7",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            command=self.start_camera,
+            height=38,
+            corner_radius=8
+        )
+        self.start_btn.pack(padx=12, pady=(0, 4), fill="x", side="bottom")
+
+
+    
