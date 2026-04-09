@@ -212,7 +212,7 @@ class GestureWaveApp(ctk.CTk):
         )
         self.main_area.pack(side="right", fill="both", expand=True)
 
-        # ── Camera feed label ────────────────────────────────────────────────
+        #Camera feed label 
         self.cam_label = ctk.CTkLabel(
             self.main_area, text="",
             fg_color="#0d0d1a",
@@ -223,7 +223,7 @@ class GestureWaveApp(ctk.CTk):
             fill="both", expand=True
         )
 
-        # ── Status bar ───────────────────────────────────────────────────────
+        #Status bar
         self.statusbar = ctk.CTkFrame(
             self.main_area,
             height=36,
