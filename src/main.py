@@ -269,3 +269,70 @@ class GestureWaveApp(ctk.CTk):
             fg_color="#1e2a3a"
         ).pack(fill="x", padx=12, pady=8)
     
+    #MODE CONTROL
+    
+
+    def _set_media_mode(self):
+        from mode_manager import _current_mode
+        if get_mode() != "media":
+            switch_mode()
+        self._update_mode_buttons()
+
+    def _set_presentation_mode(self):
+        if get_mode() != "presentation":
+            switch_mode()
+        self._update_mode_buttons()
+
+    def _update_mode_buttons(self):
+        """Updates sidebar button colors to reflect current mode."""
+        mode = get_mode()
+        if mode == "media":
+            self.btn_media.configure(
+                fg_color="#1e3a2f", text_color="#34d399"
+            )
+            self.btn_pres.configure(
+                fg_color="#1a1a2e", text_color="#6b7280"
+            )
+        else:
+            self.btn_pres.configure(
+                fg_color="#2d1f4a", text_color="#a5b4fc"
+            )
+            self.btn_media.configure(
+                fg_color="#1a1a2e", text_color="#6b7280"
+            )
+    #Camera Control
+
+    def start_camera(self):
+        if self.camera_running:
+            return
+        self.cap = cv2.VideoCapture(0)
+        if not self.cap.isOpened():
+            self.cam_status_label.configure(
+                text="  Camera not found", text_color="#f87171"
+            )
+            return
+        self.camera_running = True
+        self.cam_status_label.configure(
+            text="  Active — 30fps", text_color="#34d399"
+        )
+        self.status_cam.configure(
+            text="⬤  Camera running", text_color="#34d399"
+        )
+        # Run camera loop in a separate thread so UI doesn't freeze
+        self.cam_thread = threading.Thread(
+            target=self._camera_loop, daemon=True
+        )
+        self.cam_thread.start()
+
+    def stop_camera(self):
+        self.camera_running = False
+        if self.cap:
+            self.cap.release()
+        self.cam_status_label.configure(
+            text="  Stopped", text_color="#f59e0b"
+        )
+        self.status_cam.configure(
+            text="⬤  Camera off", text_color="#4a5568"
+        )
+        # Clear camera feed display
+        self.cam_label.configure(image=None, text="Camera stopped")
