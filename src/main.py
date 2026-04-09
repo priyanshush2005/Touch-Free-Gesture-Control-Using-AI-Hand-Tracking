@@ -336,3 +336,112 @@ class GestureWaveApp(ctk.CTk):
         )
         # Clear camera feed display
         self.cam_label.configure(image=None, text="Camera stopped")
+    
+    # Main Camera Loop - Runs in the background 
+
+    def _camera_loop(self):
+        """
+        Runs in a separate thread.
+        Reads frames, detects gestures, executes actions,
+        draws overlay, and pushes frame to UI label.
+        """
+        while self.camera_running:
+            success, frame = self.cap.read()
+            if not success:
+                break
+
+            #Flip frame (mirror effect — feels natural)
+            frame = cv2.flip(frame, 1)
+
+            #FPS calculation
+            self._fps_counter += 1
+            if time.time() - self._fps_timer >= 1.0:
+                self.fps       = self._fps_counter
+                self._fps_counter = 0
+                self._fps_timer   = time.time()
+
+            #Hand detection
+            landmarks = get_landmarks(frame)
+
+            #Gesture classification 
+            gesture, confidence, hand_count = classify(landmarks)
+            self.current_gesture = gesture
+            self.current_conf    = confidence
+            self.current_hands   = hand_count
+
+            #Execute action
+            execute(gesture, confidence, hand_count)
+
+            #Update last action in status bar 
+            if gesture not in ("NONE", "UNKNOWN"):
+                self.last_action = gesture.replace("_", " ").title()
+                self.after(0, self._update_status_bar)
+
+            #Update mode buttons if mode changed
+            self.after(0, self._update_mode_buttons)
+
+            # Draw landmarks on frame
+            frame = draw_landmarks(frame, landmarks)
+
+            #Draw HUD overlay
+            frame = draw_all(
+                frame,
+                gesture,
+                confidence,
+                hand_count,
+                self.fps
+            )
+
+            #Convert OpenCV frame → CustomTkinter image
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            pil_img   = Image.fromarray(frame_rgb)
+
+            # Resize to fit the camera label
+            label_w = self.cam_label.winfo_width()
+            label_h = self.cam_label.winfo_height()
+            if label_w > 10 and label_h > 10:
+                pil_img = pil_img.resize(
+                    (label_w, label_h), Image.LANCZOS
+                )
+
+            ctk_img = ctk.CTkImage(
+                light_image=pil_img,
+                dark_image=pil_img,
+                size=(label_w, label_h)
+            )
+
+            # Push to UI — must use after() since we're in a thread
+            self.after(0, self._update_cam_label, ctk_img)
+
+        # Loop ended — camera stopped
+        if self.cap:
+            self.cap.release()
+
+
+    def _update_cam_label(self, ctk_img):
+        """Updates camera feed label with new frame — called from main thread."""
+        self.cam_label.configure(image=ctk_img, text="")
+        self.cam_label.image = ctk_img   # keep reference to prevent GC
+
+
+    def _update_status_bar(self):
+        """Updates last action text in status bar."""
+        self.status_action.configure(
+            text=f"Last action: {self.last_action}"
+        )
+
+    #Cleanup 
+
+    def on_close(self):
+        """Called when user closes the window."""
+        self.camera_running = False
+        if self.cap:
+            self.cap.release()
+        self.destroy()
+
+
+#Entry point 
+if __name__ == "__main__":
+    reset()   # reset mode manager to defaults
+    app = GestureWaveApp()
+    app.mainloop()
