@@ -204,5 +204,68 @@ class GestureWaveApp(ctk.CTk):
         )
         self.start_btn.pack(padx=12, pady=(0, 4), fill="x", side="bottom")
 
+    def _build_main_area(self):
+        """Builds the right main area with camera feed and status bar."""
 
+        self.main_area = ctk.CTkFrame(
+            self, fg_color="#0a0a14", corner_radius=0
+        )
+        self.main_area.pack(side="right", fill="both", expand=True)
+
+        # ── Camera feed label ────────────────────────────────────────────────
+        self.cam_label = ctk.CTkLabel(
+            self.main_area, text="",
+            fg_color="#0d0d1a",
+            corner_radius=10
+        )
+        self.cam_label.pack(
+            padx=12, pady=(12, 6),
+            fill="both", expand=True
+        )
+
+        # ── Status bar ───────────────────────────────────────────────────────
+        self.statusbar = ctk.CTkFrame(
+            self.main_area,
+            height=36,
+            fg_color="#16213e",
+            corner_radius=8
+        )
+        self.statusbar.pack(padx=12, pady=(0, 10), fill="x")
+        self.statusbar.pack_propagate(False)
+
+        # Camera dot + label
+        self.status_cam = ctk.CTkLabel(
+            self.statusbar,
+            text="⬤  Camera off",
+            font=ctk.CTkFont(size=11),
+            text_color="#4a5568"
+        )
+        self.status_cam.pack(side="left", padx=14)
+
+        # MediaPipe dot + label
+        self.status_mp = ctk.CTkLabel(
+            self.statusbar,
+            text="⬤  MediaPipe ready",
+            font=ctk.CTkFont(size=11),
+            text_color="#818cf8"
+        )
+        self.status_mp.pack(side="left", padx=8)
+
+        # Last action label
+        self.status_action = ctk.CTkLabel(
+            self.statusbar,
+            text="Last action: —",
+            font=ctk.CTkFont(size=11),
+            text_color="#4a5568"
+        )
+        self.status_action.pack(side="right", padx=14)
+
+
+    def _sidebar_divider(self):
+        """Draws a thin divider line in the sidebar."""
+        ctk.CTkFrame(
+            self.sidebar,
+            height=1,
+            fg_color="#1e2a3a"
+        ).pack(fill="x", padx=12, pady=8)
     
