@@ -430,7 +430,14 @@ class GestureWaveApp(ctk.CTk):
             text=f"Last action: {self.last_action}"
         )
 
-    
+    #Cleanup 
+
+    def on_close(self):
+        """Called when user closes the window."""
+        self.camera_running = False
+        if self.cap:
+            self.cap.release()
+        self.destroy()
 
 
 #Entry point 
