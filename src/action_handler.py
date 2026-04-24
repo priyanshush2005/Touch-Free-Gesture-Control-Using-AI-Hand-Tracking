@@ -41,6 +41,60 @@ SCREENSHOT_COOLDOWN   = 3.0    # seconds between screenshots
 VOLUME_STEP           = 0.05   # volume change per frame when holding (5%)
 
 
+#Volume Helpers
+
+def _volume_up():
+    if VOLUME_CONTROL_AVAILABLE:
+        current = volume.GetMasterVolumeLevelScalar()
+        new_vol = min(1.0, current + VOLUME_STEP)
+        volume.SetMasterVolumeLevelScalar(new_vol, None)
+    else:
+        pyautogui.press('volumeup')
+
+
+def _volume_down():
+    if VOLUME_CONTROL_AVAILABLE:
+        current = volume.GetMasterVolumeLevelScalar()
+        new_vol = max(0.0, current - VOLUME_STEP)
+        volume.SetMasterVolumeLevelScalar(new_vol, None)
+    else:
+        pyautogui.press('volumedown')
+
+
+def get_volume_percent():
+    """Returns current system volume as integer 0-100.
+    Used by overlay.py to display volume on HUD.
+    """
+    if VOLUME_CONTROL_AVAILABLE:
+        return int(volume.GetMasterVolumeLevelScalar() * 100)
+    return -1   # -1 means unavailable
+
+#Presentation Actions 
+
+def _next_slide():
+    pyautogui.press('right')
+    print("[Action] Next slide")
+
+
+def _prev_slide():
+    pyautogui.press('left')
+    print("[Action] Previous slide")
+
+
+def _toggle_fullscreen():
+    """
+    Pressing F5 in PowerPoint starts the slideshow from current slide.
+    Pressing Escape exits it. We track state with _fullscreen_active.
+    """
+    global _fullscreen_active
+    if not _fullscreen_active:
+        pyautogui.press('f5')
+        _fullscreen_active = True
+        print("[Action] Fullscreen ON")
+    else:
+        pyautogui.press('escape')
+        _fullscreen_active = False
+        print("[Action] Fullscreen OFF")
 
 
 #Media Actions 
