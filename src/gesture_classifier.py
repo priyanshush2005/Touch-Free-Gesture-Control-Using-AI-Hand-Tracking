@@ -9,9 +9,9 @@ FINGER_TIPS  = [4, 8, 12, 16, 20]   # Thumb, Index, Middle, Ring, Pinky
 FINGER_BASES = [2, 6, 10, 14, 18]   # Base knuckle of each finger
 
 #Swipe detection state (tracked across frames) 
-_swipe_history = []          # stores recent x positions of index finger tip
-SWIPE_HISTORY_LENGTH = 12    # how many frames to track
-SWIPE_THRESHOLD = 0.12       # minimum normalized x movement to count as swipe
+_swipe_history = []          
+SWIPE_HISTORY_LENGTH = 12    
+SWIPE_THRESHOLD = 0.12       
 
 
 def _get_finger_states(hand):
