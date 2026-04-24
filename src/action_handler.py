@@ -97,66 +97,6 @@ def _toggle_fullscreen():
         print("[Action] Fullscreen OFF")
 
 
-#Media Actions 
-
-def _play_pause():
-    pyautogui.press('space')
-    print("[Action] Play / Pause")
-
-#Screenshot 
-def _take_screenshot():
-    global _screenshot_cooldown
-
-    now = time.time()
-    if now - _screenshot_cooldown < SCREENSHOT_COOLDOWN:
-        return   # still in cooldown, skip
-
-    # Save to user's Pictures folder
-    pictures_dir = os.path.join(os.path.expanduser("~"), "Pictures", "GestureWave")
-    os.makedirs(pictures_dir, exist_ok=True)
-
-    filename = f"screenshot_{int(now)}.png"
-    filepath = os.path.join(pictures_dir, filename)
-
-    screenshot = ImageGrab.grab()
-    screenshot.save(filepath)
-
-    _screenshot_cooldown = now
-    print(f"[Action] Screenshot saved → {filepath}")
-
-#Palm Hold Timer - for fullscreen(Presentaion Mode only)
-def get_palm_hold_progress():
-    """
-    Returns float 0.0 to 1.0 showing how long palm has been held.
-    0.0 = just started, 1.0 = 4 seconds reached.
-    Used by overlay.py to draw the progress bar.
-    """
-    if not _palm_holding:
-        return 0.0
-    elapsed = time.time() - _palm_hold_start
-    return min(1.0, elapsed / PALM_HOLD_DURATION)
-
-#Main Execution Function 
-
-def execute(gesture, confidence, hand_count):
-    """
-    Main function — called every frame by main.py.
-    Takes gesture name, confidence score, and hand count.
-    Decides what action to fire based on current mode.
-    """
-    global _last_action_time, _palm_hold_start
-    global _palm_holding, _last_gesture
-
-    now  = time.time()
-    mode = get_mode()
-
-    #GLOBAL GESTURES — work in any mode
-
-    # Screenshot — two hands both open
-    if gesture == "BOTH_PALMS" and hand_count == 2:
-        _take_screenshot()
-        return
-
     #Mode switch — thumbs up
     if gesture == "THUMBS_UP":
         switched = switch_mode()
