@@ -99,7 +99,7 @@ def draw_gesture_hud(frame, gesture, confidence):
     if elapsed > GESTURE_DISPLAY_TIME:
         return
 
-    # Format gesture name nicely
+    
     display_name = _last_gesture_displayed.replace("_", " ").title()
     conf_text    = f"Confidence: {int(confidence * 100)}%"
 
@@ -147,7 +147,7 @@ def draw_palm_hold_progress(frame):
     lx = (w - lw) // 2
     cv2.putText(frame, label, (lx, bar_y - 8), FONT, FONT_SMALL, WHITE, 1)
 
-    # Percentage text inside bar
+    
     pct_text = f"{int(progress * 100)}%"
     cv2.putText(frame, pct_text, (bar_x + bar_w + 8, bar_y + 13), FONT, FONT_SMALL, WHITE, 1)
 
@@ -163,11 +163,11 @@ def draw_volume_indicator(frame):
 
     vol = get_volume_percent()
     if vol < 0:
-        return   # pycaw not available
+        return   
 
     h, w, _ = frame.shape
 
-    # Volume bar — vertical, bottom left
+    
     bar_h     = 100
     bar_w     = 14
     bar_x     = 16
