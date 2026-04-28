@@ -229,4 +229,5 @@ def execute(gesture, confidence, hand_count):
                 _last_action_time = now
 
     # Track last gesture for next frame
-    _last_gesture = gesture    
+    _last_gesture = gesture   
+     
