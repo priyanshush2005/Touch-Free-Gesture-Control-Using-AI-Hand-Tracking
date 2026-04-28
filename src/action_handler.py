@@ -1,11 +1,8 @@
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
 import time
 import pyautogui
 import subprocess
 from PIL import ImageGrab
+import os
 
 from mode_manager import get_mode, switch_mode, is_presentation_mode, is_media_mode
 
@@ -26,7 +23,7 @@ except Exception:
     VOLUME_CONTROL_AVAILABLE = False
     print("[ActionHandler] pycaw not available — volume control disabled")
 
-# ── Internal state
+# ── Internal state ───────────────────────────────────────────────────────────
 _last_action_time      = 0      # timestamp of last action fired
 _palm_hold_start       = 0      # when open palm gesture started
 _palm_holding          = False  # is palm currently being held
@@ -34,14 +31,14 @@ _fullscreen_active     = False  # is presentation fullscreen on or off
 _screenshot_cooldown   = 0      # timestamp of last screenshot
 _last_gesture          = "NONE" # previous frame's gesture
 
-#Cooldown settings (seconds)
+# ── Cooldown settings (seconds) ──────────────────────────────────────────────
 ACTION_COOLDOWN       = 0.6    # general cooldown between actions
 PALM_HOLD_DURATION    = 4.0    # seconds to hold palm for fullscreen toggle
 SCREENSHOT_COOLDOWN   = 3.0    # seconds between screenshots
 VOLUME_STEP           = 0.05   # volume change per frame when holding (5%)
 
 
-#Volume Helpers
+#  VOLUME HELPERS
 
 def _volume_up():
     if VOLUME_CONTROL_AVAILABLE:
@@ -62,14 +59,15 @@ def _volume_down():
 
 
 def get_volume_percent():
-    """Returns current system volume as integer 0-100.
+    """
+    Returns current system volume as integer 0-100.
     Used by overlay.py to display volume on HUD.
     """
     if VOLUME_CONTROL_AVAILABLE:
         return int(volume.GetMasterVolumeLevelScalar() * 100)
     return -1   # -1 means unavailable
 
-#Presentation Actions 
+#  PRESENTATION ACTIONS
 
 def _next_slide():
     pyautogui.press('right')
@@ -96,17 +94,76 @@ def _toggle_fullscreen():
         _fullscreen_active = False
         print("[Action] Fullscreen OFF")
 
+#  MEDIA ACTIONS
 
+def _play_pause():
+    pyautogui.press('space')
+    print("[Action] Play / Pause")
 
-    
-    #Mode switch — thumbs up
+#  SCREENSHOT
+
+def _take_screenshot():
+    global _screenshot_cooldown
+
+    now = time.time()
+    if now - _screenshot_cooldown < SCREENSHOT_COOLDOWN:
+        return   # still in cooldown, skip
+
+    # Save to user's Pictures folder
+    pictures_dir = os.path.join(os.path.expanduser("~"), "Pictures", "GestureWave")
+    os.makedirs(pictures_dir, exist_ok=True)
+
+    filename = f"screenshot_{int(now)}.png"
+    filepath = os.path.join(pictures_dir, filename)
+
+    screenshot = ImageGrab.grab()
+    screenshot.save(filepath)
+
+    _screenshot_cooldown = now
+    print(f"[Action] Screenshot saved → {filepath}")
+
+#  PALM HOLD TIMER — for fullscreen toggle (presentation mode only)
+
+def get_palm_hold_progress():
+    """
+    Returns float 0.0 to 1.0 showing how long palm has been held.
+    0.0 = just started, 1.0 = 4 seconds reached.
+    Used by overlay.py to draw the progress bar.
+    """
+    if not _palm_holding:
+        return 0.0
+    elapsed = time.time() - _palm_hold_start
+    return min(1.0, elapsed / PALM_HOLD_DURATION)
+
+#  MAIN EXECUTE FUNCTION — called every frame from main.py
+
+def execute(gesture, confidence, hand_count):
+    """
+    Main function — called every frame by main.py.
+    Takes gesture name, confidence score, and hand count.
+    Decides what action to fire based on current mode.
+    """
+    global _last_action_time, _palm_hold_start
+    global _palm_holding, _last_gesture
+
+    now  = time.time()
+    mode = get_mode()
+
+    # GLOBAL GESTURES — work in any mode
+
+    # Screenshot — two hands both open
+    if gesture == "BOTH_PALMS" and hand_count == 2:
+        _take_screenshot()
+        return
+
+    # Mode switch — thumbs up
     if gesture == "THUMBS_UP":
         switched = switch_mode()
         if switched:
             print(f"[Action] Mode switched to: {get_mode().upper()}")
         return
 
-    #PRESENTATION MODE 
+    # PRESENTATION MODE
 
     if mode == "presentation":
 
@@ -137,7 +194,7 @@ def _toggle_fullscreen():
                     _prev_slide()
                 _last_action_time = now
 
-    #MEDIA MODE 
+    # MEDIA MODE
 
     elif mode == "media":
 
@@ -172,4 +229,4 @@ def _toggle_fullscreen():
                 _last_action_time = now
 
     # Track last gesture for next frame
-    _last_gesture = gesture    
+    _last_gesture = gesture
