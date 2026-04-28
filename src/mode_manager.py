@@ -8,6 +8,7 @@ PRESENTATION_MODE = "presentation"
 MEDIA_MODE        = "media"
 
 
+#Internal state
 _current_mode         = MEDIA_MODE   
 _last_switch_time     = 0            
 MODE_SWITCH_COOLDOWN  = 2.0          
