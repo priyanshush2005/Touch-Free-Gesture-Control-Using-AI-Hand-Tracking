@@ -7,7 +7,7 @@ import time
 from action_handler import get_palm_hold_progress, get_volume_percent
 from mode_manager import get_mode
 
-#Colors (BGR format for OpenCV)
+# ── Colors (BGR format for OpenCV) ───────────────────────────────────────────
 WHITE       = (255, 255, 255)
 BLACK       = (0,   0,   0  )
 GREEN       = (0,   255, 180)
@@ -18,17 +18,18 @@ GRAY        = (130, 130, 130)
 RED         = (0,   0,   220)
 YELLOW      = (0,   220, 220)
 
-#Font Settings 
+# ── Font settings ────────────────────────────────────────────────────────────
 FONT        = cv2.FONT_HERSHEY_SIMPLEX
 FONT_SMALL  = 0.5
 FONT_MEDIUM = 0.7
 FONT_LARGE  = 1.0
 THICKNESS   = 2
 
-#Internal State 
+# ── Internal state ───────────────────────────────────────────────────────────
 _last_gesture_displayed = "NONE"
 _gesture_display_timer  = 0
 GESTURE_DISPLAY_TIME    = 1.5   # seconds to keep gesture name on screen
+
 
 def _draw_filled_rect(frame, x, y, w, h, color, alpha=0.5):
     """
@@ -38,6 +39,7 @@ def _draw_filled_rect(frame, x, y, w, h, color, alpha=0.5):
     overlay = frame.copy()
     cv2.rectangle(overlay, (x, y), (x + w, y + h), color, -1)
     cv2.addWeighted(overlay, alpha, frame, 1 - alpha, 0, frame)
+
 
 def _draw_text_with_bg(frame, text, x, y, font_scale, color, bg_color, padding=6):
     """
@@ -99,7 +101,7 @@ def draw_gesture_hud(frame, gesture, confidence):
     if elapsed > GESTURE_DISPLAY_TIME:
         return
 
-    
+    # Format gesture name nicely
     display_name = _last_gesture_displayed.replace("_", " ").title()
     conf_text    = f"Confidence: {int(confidence * 100)}%"
 
@@ -147,7 +149,7 @@ def draw_palm_hold_progress(frame):
     lx = (w - lw) // 2
     cv2.putText(frame, label, (lx, bar_y - 8), FONT, FONT_SMALL, WHITE, 1)
 
-    
+    # Percentage text inside bar
     pct_text = f"{int(progress * 100)}%"
     cv2.putText(frame, pct_text, (bar_x + bar_w + 8, bar_y + 13), FONT, FONT_SMALL, WHITE, 1)
 
@@ -163,11 +165,11 @@ def draw_volume_indicator(frame):
 
     vol = get_volume_percent()
     if vol < 0:
-        return   
+        return   # pycaw not available
 
     h, w, _ = frame.shape
 
-    
+    # Volume bar — vertical, bottom left
     bar_h     = 100
     bar_w     = 14
     bar_x     = 16
