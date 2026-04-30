@@ -87,7 +87,141 @@ class GestureWaveApp(ctk.CTk):
 
         self._sidebar_divider()
         
-     
+     #Mode Selection
+        ctk.CTkLabel(
+            self.sidebar, text="MODE",
+            font=ctk.CTkFont(size=10, weight="bold"),
+            text_color="#4a5568"
+        ).pack(padx=16, anchor="w", pady=(10, 4))
+
+        self.btn_media = ctk.CTkButton(
+            self.sidebar,
+            text="  Media Control",
+            fg_color="#1e3a2f",
+            hover_color="#1a4d3a",
+            text_color="#34d399",
+            font=ctk.CTkFont(size=13),
+            anchor="w",
+            command=self._set_media_mode,
+            height=38,
+            corner_radius=8
+        )
+        self.btn_media.pack(padx=12, pady=3, fill="x")
+
+        self.btn_pres = ctk.CTkButton(
+            self.sidebar,
+            text="  Presentation",
+            fg_color="#1a1a2e",
+            hover_color="#2d2d5e",
+            text_color="#6b7280",
+            font=ctk.CTkFont(size=13),
+            anchor="w",
+            command=self._set_presentation_mode,
+            height=38,
+            corner_radius=8
+        )
+        self.btn_pres.pack(padx=12, pady=3, fill="x")
+
+        self._sidebar_divider()
+
+        #Camera Status
+        ctk.CTkLabel(
+            self.sidebar, text="CAMERA",
+            font=ctk.CTkFont(size=10, weight="bold"),
+            text_color="#4a5568"
+        ).pack(padx=16, anchor="w", pady=(10, 4))
+
+        self.cam_status_label = ctk.CTkLabel(
+            self.sidebar,
+            text="  Starting...",
+            font=ctk.CTkFont(size=12),
+            text_color="#f59e0b",
+            fg_color="#1a1a2e",
+            corner_radius=6,
+            height=32
+        )
+        self.cam_status_label.pack(padx=12, fill="x")
+
+        self._sidebar_divider()
+
+        #Gesture Map
+        ctk.CTkLabel(
+            self.sidebar, text="GESTURE MAP",
+            font=ctk.CTkFont(size=10, weight="bold"),
+            text_color="#4a5568"
+        ).pack(padx=16, anchor="w", pady=(10, 6))
+
+        gestures = [
+            ("Open Palm",    "Play/Pause · Fullscreen"),
+            ("Swipe Right",  "Next · Vol up"),
+            ("Swipe Left",   "Prev · Vol down"),
+            ("Index Up",     "Volume up (hold)"),
+            ("Pinky Up",     "Volume down (hold)"),
+            ("Thumbs Up",    "Switch mode"),
+            ("Both Palms",   "Screenshot"),
+        ]
+
+        for gesture, action in gestures:
+            row = ctk.CTkFrame(self.sidebar, fg_color="transparent")
+            row.pack(padx=12, fill="x", pady=1)
+            ctk.CTkLabel(
+                row, text=gesture,
+                font=ctk.CTkFont(size=11),
+                text_color="#9ca3af", width=90, anchor="w"
+            ).pack(side="left")
+            ctk.CTkLabel(
+                row, text=action,
+                font=ctk.CTkFont(size=10),
+                text_color="#4a5568", anchor="w"
+            ).pack(side="left", padx=(4, 0))
+
+        self._sidebar_divider()
+
+        #Stop button
+        self.stop_btn = ctk.CTkButton(
+            self.sidebar,
+            text="Stop Camera",
+            fg_color="#3b0f0f",
+            hover_color="#5c1a1a",
+            text_color="#fca5a5",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            command=self.stop_camera,
+            height=38,
+            corner_radius=8
+        )
+        self.stop_btn.pack(padx=12, pady=(8, 6), fill="x", side="bottom")
+
+        self.start_btn = ctk.CTkButton(
+            self.sidebar,
+            text="Start Camera",
+            fg_color="#0f3b1f",
+            hover_color="#1a5c2e",
+            text_color="#6ee7b7",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            command=self.start_camera,
+            height=38,
+            corner_radius=8
+        )
+        self.start_btn.pack(padx=12, pady=(0, 4), fill="x", side="bottom")
+
+    def _build_main_area(self):
+        """Builds the right main area with camera feed and status bar."""
+
+        self.main_area = ctk.CTkFrame(
+            self, fg_color="#0a0a14", corner_radius=0
+        )
+        self.main_area.pack(side="right", fill="both", expand=True)
+
+        #Camera feed label 
+        self.cam_label = ctk.CTkLabel(
+            self.main_area, text="",
+            fg_color="#0d0d1a",
+            corner_radius=10
+        )
+        self.cam_label.pack(
+            padx=12, pady=(12, 6),
+            fill="both", expand=True
+        )
 
         #Status bar
         self.statusbar = ctk.CTkFrame(
