@@ -1,10 +1,9 @@
 import time
 import pyautogui
-import subprocess
 from PIL import ImageGrab
 import os
 
-from mode_manager import get_mode, switch_mode, is_presentation_mode, is_media_mode
+from mode_manager import get_mode
 
 # ── PyAutoGUI safety settings ────────────────────────────────────────────────
 pyautogui.FAILSAFE = True    # move mouse to top-left corner to emergency stop
@@ -158,9 +157,7 @@ def execute(gesture, confidence, hand_count):
 
     # Mode switch — thumbs up
     if gesture == "THUMBS_UP":
-        switched = switch_mode()
-        if switched:
-            print(f"[Action] Mode switched to: {get_mode().upper()}")
+        _take_screenshot()
         return
 
     # PRESENTATION MODE

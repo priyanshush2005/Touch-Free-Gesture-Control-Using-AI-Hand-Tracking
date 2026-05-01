@@ -83,6 +83,152 @@ def draw_mode_badge(frame):
     _draw_filled_rect(frame, x - 8, y - text_h - 8, text_w + 16, text_h + 16, bg_color, alpha=0.7)
     cv2.putText(frame, label, (x, y), FONT, FONT_SMALL, txt_color, THICKNESS)
 
+def draw_gesture_hud(frame, gesture, confidence):
+    """
+    Draws gesture name and confidence % in top-left corner.
+    Gesture name stays visible for 1.5 seconds after detection.
+    """
+    global _last_gesture_displayed, _gesture_display_timer
 
-# Draws the name of the detected gesture in the center of the screen for a brief moment.
-# This provides immediate feedback to the user about which gesture was recognized.
+    # Update displayed gesture if a new real gesture detected
+    if gesture not in ("NONE", "UNKNOWN"):
+        _last_gesture_displayed = gesture
+        _gesture_display_timer  = time.time()
+
+    # Only show if within display time window
+    elapsed = time.time() - _gesture_display_timer
+    if elapsed > GESTURE_DISPLAY_TIME:
+        return
+
+    # Format gesture name nicely
+    display_name = _last_gesture_displayed.replace("_", " ").title()
+    conf_text    = f"Confidence: {int(confidence * 100)}%"
+
+    # FIX: x bumped from 12 → 20 to prevent clipping at left edge
+    _draw_text_with_bg(frame, display_name, 20, 35, FONT_MEDIUM, GREEN, DARK_BG)
+    _draw_text_with_bg(frame, conf_text,    20, 65, FONT_SMALL,  GRAY,  DARK_BG)
+
+
+def draw_palm_hold_progress(frame):
+    """
+    Draws a filling progress bar when palm is being held.
+    Shows user how close they are to triggering fullscreen (4 seconds).
+    Only visible when progress > 0.
+    """
+    progress = get_palm_hold_progress()
+
+    if progress <= 0:
+        return
+
+    h, w, _ = frame.shape
+
+    # Bar position — bottom center of frame
+    bar_w = 300
+    bar_h = 18
+    bar_x = (w - bar_w) // 2
+    bar_y = h - 50
+
+    # Background track
+    _draw_filled_rect(frame, bar_x, bar_y, bar_w, bar_h, DARK_BG, alpha=0.7)
+
+    # Filled progress portion
+    fill_w = int(bar_w * progress)
+    if fill_w > 0:
+        color = ORANGE if progress < 0.8 else GREEN
+        cv2.rectangle(frame, (bar_x, bar_y), (bar_x + fill_w, bar_y + bar_h), color, -1)
+
+    # Border
+    cv2.rectangle(frame, (bar_x, bar_y), (bar_x + bar_w, bar_y + bar_h), WHITE, 1)
+
+    # Label above bar
+    label = "Hold to toggle fullscreen..."
+    (lw, lh), _ = cv2.getTextSize(label, FONT, FONT_SMALL, 1)
+    lx = (w - lw) // 2
+    cv2.putText(frame, label, (lx, bar_y - 8), FONT, FONT_SMALL, WHITE, 1)
+
+    # Percentage text inside bar
+    pct_text = f"{int(progress * 100)}%"
+    cv2.putText(frame, pct_text, (bar_x + bar_w + 8, bar_y + 13), FONT, FONT_SMALL, WHITE, 1)
+
+
+def draw_volume_indicator(frame):
+    """
+    Draws current volume level in bottom-left corner.
+    Only shown in media mode.
+    """
+    mode = get_mode()
+    if mode != "media":
+        return
+
+    vol = get_volume_percent()
+    if vol < 0:
+        return   # pycaw not available
+
+    h, w, _ = frame.shape
+
+    # Volume bar — vertical, bottom left
+    bar_h = 100
+    bar_w = 14
+    bar_x = 20   # FIX: x bumped from 16 → 20 to match gesture text padding
+    bar_y = h - bar_h - 60
+
+    # Background
+    _draw_filled_rect(frame, bar_x - 2, bar_y - 2, bar_w + 4, bar_h + 4, DARK_BG, alpha=0.6)
+
+    # Filled portion
+    fill_h = int(bar_h * (vol / 100))
+    if fill_h > 0:
+        fill_y = bar_y + (bar_h - fill_h)
+        color  = RED if vol > 85 else ORANGE if vol > 60 else GREEN
+        cv2.rectangle(frame, (bar_x, fill_y), (bar_x + bar_w, bar_y + bar_h), color, -1)
+
+    # Border
+    cv2.rectangle(frame, (bar_x, bar_y), (bar_x + bar_w, bar_y + bar_h), WHITE, 1)
+
+    # Volume % text below bar
+    vol_text = f"Vol {vol}%"
+    cv2.putText(frame, vol_text, (bar_x - 2, bar_y + bar_h + 18),
+                FONT, FONT_SMALL, WHITE, 1)
+
+
+def draw_hand_count(frame, hand_count):
+    """
+    Shows how many hands are detected at the bottom of the frame.
+    Turns yellow when 2 hands detected (screenshot ready).
+    """
+    h, w, _ = frame.shape
+
+    if hand_count == 0:
+        return
+
+    color = YELLOW if hand_count == 2 else GRAY
+    label = f"{hand_count} hand{'s' if hand_count > 1 else ''} detected"
+    if hand_count == 2:
+        label += "  —  both palms = screenshot"
+
+    cv2.putText(frame, label, (20, h - 16), FONT, FONT_SMALL, color, 1)
+
+
+def draw_fps(frame, fps):
+    """
+    Draws FPS counter in bottom-right corner.
+    """
+    h, w, _ = frame.shape
+    label    = f"FPS: {int(fps)}"
+    (lw, _), _ = cv2.getTextSize(label, FONT, FONT_SMALL, 1)
+    cv2.putText(frame, label, (w - lw - 12, h - 16), FONT, FONT_SMALL, GRAY, 1)
+
+
+def draw_all(frame, gesture, confidence, hand_count, fps):
+    """
+    Master function — call this once per frame from main.py.
+    Draws everything on the frame in the correct order.
+    """
+    draw_mode_badge(frame)
+    draw_gesture_hud(frame, gesture, confidence)
+    draw_palm_hold_progress(frame)
+    draw_volume_indicator(frame)
+    draw_hand_count(frame, hand_count)
+    draw_fps(frame, fps)
+
+    return frame
