@@ -7,9 +7,20 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
+import sys # Add this to your imports at the top
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 # ── Model path (relative — works on any computer) ──────────────────────────
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, '..', 'models', 'hand_landmarker.task')
+MODEL_PATH = resource_path(os.path.join('models', 'hand_landmarker.task'))
 
 # ── MediaPipe setup ─────────────────────────────────────────────────────────
 base_options = python.BaseOptions(model_asset_path=MODEL_PATH)
