@@ -11,7 +11,7 @@ from PIL import Image, ImageTk
 from handDetection      import get_landmarks, draw_landmarks, get_hand_count
 from gesture_classifier import classify
 from action_handler     import execute, get_palm_hold_progress, get_volume_percent
-from mode_manager       import get_mode, switch_mode, reset
+from mode_manager       import get_mode, switch_mode
 from overlay            import draw_all
 
 #App theme 
@@ -153,12 +153,9 @@ class GestureWaveApp(ctk.CTk):
 
         gestures = [
             ("Open Palm",    "Play/Pause · Fullscreen"),
-            ("Swipe Right",  "Next · Vol up"),
-            ("Swipe Left",   "Prev · Vol down"),
-            ("Index Up",     "Volume up (hold)"),
-            ("Pinky Up",     "Volume down (hold)"),
-            ("Thumbs Up",    "Switch mode"),
-            ("Both Palms",   "Screenshot"),
+            ("Index Up",     "Volume up (hold) · Next Slide"),
+            ("Pinky Up",     "Volume down (hold) · Prev. Slide"),
+            ("Thumbs Up",    "Screenshot"),
         ]
 
         for gesture, action in gestures:
@@ -442,6 +439,6 @@ class GestureWaveApp(ctk.CTk):
 
 #Entry point 
 if __name__ == "__main__":
-    reset()   # reset mode manager to defaults
+   # reset mode manager to defaults
     app = GestureWaveApp()
     app.mainloop()
