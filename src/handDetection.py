@@ -20,6 +20,10 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 # ── Model path (relative — works on any computer) ──────────────────────────
+# MODEL_PATH = resource_path(os.path.join('models', 'hand_landmarker.task'))
+# BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
+# MODEL_PATH = os.path.abspath(os.path.join(BASE_DIR, '..', 'models', 'hand_landmarker.task'))
+BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = resource_path(os.path.join('models', 'hand_landmarker.task'))
 
 # ── MediaPipe setup ─────────────────────────────────────────────────────────

@@ -393,19 +393,33 @@ class GestureWaveApp(ctk.CTk):
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             pil_img   = Image.fromarray(frame_rgb)
 
-            # Resize to fit the camera label
+            # Resize to fit the camera label while maintaining aspect ratio
             label_w = self.cam_label.winfo_width()
             label_h = self.cam_label.winfo_height()
+            
             if label_w > 10 and label_h > 10:
+                # Aspect ratio calculation
+                img_w, img_h = pil_img.size
+                ratio = min(label_w / img_w, label_h / img_h)
+                new_w = int(img_w * ratio)
+                new_h = int(img_h * ratio)
+
                 pil_img = pil_img.resize(
-                    (label_w, label_h), Image.LANCZOS
+                    (new_w, new_h), Image.LANCZOS
                 )
 
-            ctk_img = ctk.CTkImage(
-                light_image=pil_img,
-                dark_image=pil_img,
-                size=(label_w, label_h)
-            )
+                ctk_img = ctk.CTkImage(
+                    light_image=pil_img,
+                    dark_image=pil_img,
+                    size=(new_w, new_h)
+                )
+            else:
+                # Fallback if label hasn't rendered size yet
+                ctk_img = ctk.CTkImage(
+                    light_image=pil_img,
+                    dark_image=pil_img,
+                    size=(pil_img.width, pil_img.height)
+                )
 
             # Push to UI — must use after() since we're in a thread
             self.after(0, self._update_cam_label, ctk_img)

@@ -99,6 +99,14 @@ def _play_pause():
     pyautogui.press('space')
     print("[Action] Play / Pause")
 
+def _youtube_fullscreen():
+    """
+    Presses 'F' key — toggles fullscreen on YouTube, VLC,
+    and most media players.
+    """
+    pyautogui.press('f')
+    print("[Action] Fullscreen toggled (F key)")
+
 #  SCREENSHOT
 
 def _take_screenshot():
@@ -191,6 +199,17 @@ def execute(gesture, confidence, hand_count):
                     _prev_slide()
                 _last_action_time = now
 
+        # Index finger = next slide, Pinky = prev slide (with cooldown)
+        if gesture == "INDEX_UP":
+            if now - _last_action_time >= ACTION_COOLDOWN:
+                _next_slide()
+                _last_action_time = now
+
+        if gesture == "PINKY_UP":
+            if now - _last_action_time >= ACTION_COOLDOWN:
+                _prev_slide()
+                _last_action_time = now
+
     # MEDIA MODE
 
     elif mode == "media":
@@ -203,6 +222,11 @@ def execute(gesture, confidence, hand_count):
         if gesture == "OPEN_PALM":
             if now - _last_action_time >= ACTION_COOLDOWN:
                 _play_pause()
+                _last_action_time = now
+        
+        elif gesture == "CLOSED_FIST":
+            if now - _last_action_time >= ACTION_COOLDOWN:
+                _youtube_fullscreen()
                 _last_action_time = now
 
         # Index finger up = volume up (continuous, no cooldown needed)

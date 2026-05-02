@@ -94,6 +94,11 @@ def classify(landmarks):
     if not fingers[0] and not fingers[1] and not fingers[2] \
        and not fingers[3] and fingers[4]:
         return ("PINKY_UP", 0.92, hand_count)
+    
+    #Closed Fist 
+    if not fingers[0] and not fingers[1] and not fingers[2] \
+       and not fingers[3] and not fingers[4]:
+        return ("CLOSED_FIST", 0.92, hand_count)
 
     #SWIPE DETECTION tracks index fingertip across frames
     index_tip_x = hand[8].x   #normalized x position of index fingertip
