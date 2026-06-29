@@ -128,14 +128,14 @@ HUD Overlay (gesture name + confidence on screen)
 
 - [x] Project structure setup
 - [x] Hand landmark detection with live overlay
-- [ ] Gesture classifier
-- [ ] Mode manager
-- [ ] Action handler (presentation control)
-- [ ] Action handler (media control)
-- [ ] Two-hand screenshot
-- [ ] HUD overlay
-- [ ] Final integration in main.py
-- [ ] Package as .exe with PyInstaller
+- [x] Gesture classifier
+- [x] Mode manager
+- [x] Action handler (presentation control)
+- [x] Action handler (media control)
+- [x] Two-hand screenshot
+- [x] HUD overlay
+- [x] Final integration in main.py
+- [x] Package as .exe with PyInstaller
 
 ---
 
