@@ -31,11 +31,11 @@ Built with Python, OpenCV, and MediaPipe — no special hardware required.
 | Feature | Description | Status |
 |---|---|---|
 | Live Camera Overlay | Real-time hand landmark visualization on webcam feed | ✅ Done |
-| Gesture HUD | Displays detected gesture name and confidence % on screen | 🔨 In Progress |
-| Presentation Control | Swipe gestures to navigate slides | 🔨 In Progress |
-| Media Control | Volume up/down and play/pause via gestures | 🔨 In Progress |
-| Mode Switching | Switch between Presentation and Media mode with a gesture | 🔨 In Progress |
-| Two-Hand Screenshot | Both palms open simultaneously takes a screenshot | 🔨 In Progress |
+| Gesture HUD | Displays detected gesture name and confidence % on screen | ✅ Done |
+| Presentation Control | Swipe gestures to navigate slides | ✅ Done |
+| Media Control | Volume up/down and play/pause via gestures | ✅ Done |
+| Mode Switching | Switch between Presentation and Media mode with a gesture | ✅ Done |
+| Two-Hand Screenshot | Both palms open simultaneously takes a screenshot | ✅ Done |
 
 ---
 
